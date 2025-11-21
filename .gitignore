@@ -1,0 +1,10 @@
+# Maven build output
+openwallet-app/target/
+
+# IntelliJ / VSCode
+.idea/
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
