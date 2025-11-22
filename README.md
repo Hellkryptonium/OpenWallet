@@ -1,68 +1,128 @@
 # OpenWallet
 
-OpenWallet is an open-source, non-custodial Ethereum wallet built with Java 17, JavaFX, and Web3j. The project guides users through two delivery phases that cover everything from mnemonic-based key management to ERC-20 token flows and bridge integrations.
+OpenWallet is a secure, open-source, non-custodial Ethereum wallet built with **Java 17**, **JavaFX**, and **Web3j**. It is designed to provide a seamless experience for managing Ethereum assets on the Sepolia Testnet, featuring military-grade encryption, local database storage, and a modern responsive UI.
 
-## Tech Stack
+## 🚀 Features
 
-- Java 17+
-- JavaFX for desktop UI
-- Web3j for Ethereum interactions
-- BouncyCastle + Argon2id for cryptography
-- AES-GCM for private-key encryption
-- Maven for builds
+### Core Wallet Features
 
-## Phase 1 — Core Wallet (Mid Submission)
+- **Non-Custodial**: You own your keys. Private keys are encrypted and stored locally.
+- **BIP-39 Compliant**: Generates standard 12-word mnemonic phrases for wallet recovery.
+- **Secure Login**: Password-protected access using AES-GCM encryption.
+- **Real-time Balance**: Fetches live ETH balances from the Sepolia Testnet via Alchemy RPC.
+- **Send & Receive**: Easily send ETH to any address and receive funds via QR code.
+- **Transaction History**: Automatically logs all outgoing transactions to a local database.
 
-Focus on the foundational wallet experience:
+### Technical Highlights (University Rubric Compliance)
 
-1. **Project setup** — Maven project with JavaFX/Web3j/BouncyCastle/Argon2 dependencies, initial README.
-2. **Wallet core** — BIP-39 mnemonic generation, BIP-44 derivation (m/44'/60'/0'/0/0), key pair + address creation, AES-GCM + Argon2 keystore encryption.
-3. **Keystore system** — Export/import encrypted JSON keystores.
-4. **JavaFX UI** — Screens for creating/importing wallets, showing address/balance, initiating sends.
-5. **RPC integration** — Connect to Sepolia, fetch balances/gas, sign and send ETH transactions.
-6. **Docs & release** — README updates, architecture notes, screenshots, Phase 1 tag.
+- **OOP Principles**: Extensive use of Interfaces (`WalletDao`, `TransactionLogDao`), Inheritance (`OpenWalletException`), and Polymorphism.
+- **Database Connectivity**: Custom JDBC implementation with MySQL for storing encrypted wallet profiles and transaction logs.
+- **Multithreading**: Uses `CompletableFuture` for non-blocking blockchain RPC calls and `Platform.runLater` for thread-safe UI updates.
+- **Collections**: Utilizes `List`, `Optional`, and `ObservableList` for efficient data management.
+- **Security**: Implements PBKDF2 key derivation and AES-256-GCM encryption.
 
-Phase 1 output: create/import wallets, encrypted key storage, address & balance view, send Sepolia ETH, basic desktop UI.
+## 🛠 Tech Stack
 
-## Phase 2 — Advanced Features (Final Submission)
+- **Language**: Java 17
+- **UI Framework**: JavaFX 21 (FXML + CSS)
+- **Blockchain Library**: Web3j 4.10.3
+- **Database**: MySQL 8.0 (JDBC)
+- **Build Tool**: Maven
+- **Cryptography**: Bouncy Castle, PBKDF2, AES-GCM
+- **Utilities**: ZXing (QR Code Generation)
 
-Add power-user capabilities and polish:
+## 📦 Installation & Setup
 
-1. **ERC-20 support** — Token metadata, balances, transfers, custom token management.
-2. **Custom token** — Deploy an ERC-20 on Sepolia (OpenZeppelin/Hardhat) and integrate it.
-3. **Bridging UI** — Screens/workflows for cross-chain transfers (link to Connext, Wormhole, etc.).
-4. **Chainlink integration** (optional) — Fetch USD prices via Sepolia data feeds.
-5. **Multi-network architecture** — Config-driven networks (Sepolia, Mainnet, Polygon, Base) via `networks.json` & `tokens.json`.
-6. **UI polish** — Dashboard, token list, transaction history, settings, keystore management.
-7. **Docs & release** — Final README, diagrams, demo video, v1.0 tag.
+### Prerequisites
 
-Phase 2 output: production-ready wallet with secure key management, ETH + ERC-20 support, custom token, bridging flow, price feeds, multi-network backbone, and polished UI.
+1.  **Java JDK 17** or higher.
+2.  **Maven 3.9+**.
+3.  **MySQL Server** running locally.
 
-## Repository Layout
+### Database Setup
+
+1.  Open your MySQL client (Workbench or Command Line).
+2.  Create the database and tables using the provided schema:
+
+    ```sql
+    CREATE DATABASE openwallet_db;
+    USE openwallet_db;
+
+    CREATE TABLE wallet_profiles (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        profile_name VARCHAR(255) UNIQUE NOT NULL,
+        wallet_address VARCHAR(42) NOT NULL,
+        encrypted_json TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE transaction_logs (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        wallet_address VARCHAR(42) NOT NULL,
+        tx_hash VARCHAR(66) NOT NULL,
+        amount DECIMAL(20, 8) NOT NULL,
+        token_symbol VARCHAR(10) DEFAULT 'ETH',
+        status VARCHAR(20) DEFAULT 'PENDING',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    ```
+
+3.  Update `src/main/resources/db.properties` with your MySQL credentials:
+    ```properties
+    db.url=jdbc:mysql://localhost:3306/openwallet_db
+    db.user=root
+    db.password=YOUR_PASSWORD
+    rpc.url=https://eth-sepolia.g.alchemy.com/v2/YOUR_API_KEY
+    ```
+
+### Running the Application
+
+1.  Clone the repository:
+    ```bash
+    git clone https://github.com/Hellkryptonium/OpenWallet.git
+    cd OpenWallet/openwallet-app
+    ```
+2.  Build and Run:
+    ```bash
+    mvn javafx:run
+    ```
+
+## 🖥 Usage Guide
+
+1.  **Startup**: On first launch, click **"Create New Wallet"**.
+2.  **Creation**:
+    - Write down your **12-word Secret Recovery Phrase**. This is the ONLY way to recover your funds.
+    - Set a strong password to encrypt your wallet file.
+3.  **Dashboard**:
+    - View your **Wallet Address** and **ETH Balance**.
+    - **Receive**: Click "Receive" to show your QR code.
+    - **Send**: Click "Send", enter a recipient address (0x...) and amount.
+4.  **History**: View your recent transactions in the table at the bottom of the dashboard.
+5.  **Logout**: Securely lock your wallet when done.
+
+## 📂 Project Structure
 
 ```
 openwallet-app/
-  pom.xml
-  src/main/java/io/openwallet/MainApp.java
-  src/main/resources/
-  src/test/java/io/openwallet/MainAppTest.java
+├── src/main/java/io/openwallet/
+│   ├── controller/       # JavaFX Controllers (MVC Pattern)
+│   ├── crypto/           # Encryption & Key Derivation Logic
+│   ├── db/               # DAO Layer & Database Connection (Singleton)
+│   ├── exception/        # Custom Exception Classes
+│   ├── model/            # POJOs (WalletProfile, TransactionLog)
+│   ├── service/          # Business Logic (Web3j, BIP-39)
+│   └── MainApp.java      # Application Entry Point
+├── src/main/resources/
+│   ├── io/openwallet/view/  # FXML Views & CSS Styles
+│   └── db.properties        # Configuration File
+└── pom.xml                  # Maven Dependencies
 ```
 
-## Getting Started
+## 🔒 Security Architecture
 
-1. Install Java 17 and Maven 3.9+.
-2. Navigate into the project folder:
-   ```
-   cd openwallet-app
-   ```
-3. Run the JavaFX app:
-   ```
-   mvn javafx:run
-   ```
+- **Key Storage**: Private keys are never stored in plain text. They are encrypted using **AES-GCM** with a key derived from your password using **PBKDF2WithHmacSHA256**.
+- **Non-Blocking UI**: All network operations (RPC calls) run on background threads to prevent UI freezing, ensuring a smooth user experience.
 
-## Next Steps
+## 📜 License
 
-- Flesh out wallet domain modules (WalletService, CryptoUtil, KeystoreService).
-- Bootstrap JavaFX views for wallet creation/import.
-- Integrate Sepolia RPC credentials via environment variables or config files.
-- Document security considerations (password strength, storage, network calls).
+This project is licensed under the MIT License - see the LICENSE file for details.

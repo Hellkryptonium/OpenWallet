@@ -8,3 +8,6 @@ openwallet-app/target/
 # OS files
 .DS_Store
 Thumbs.db
+
+PHASE.md
+
