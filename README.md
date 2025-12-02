@@ -39,6 +39,17 @@ OpenWallet is a secure, open-source, non-custodial Ethereum wallet built with **
 2.  **Maven 3.9+**.
 3.  **MySQL Server** running locally.
 
+### Getting an RPC URL (Alchemy)
+
+To connect to the blockchain, you need an API key from a node provider like Alchemy:
+
+1.  Go to [Alchemy.com](https://www.alchemy.com/) and sign up for a free account.
+2.  Navigate to the **Apps** dashboard and click **"Create new app"**.
+3.  Set **Chain** to `Ethereum` and **Network** to `Sepolia`.
+4.  Click **"Create App"**.
+5.  Click **"API Key"** on your new app card.
+6.  Copy the **HTTPS** URL (e.g., `https://eth-sepolia.g.alchemy.com/v2/...`). You will need this for the configuration step below.
+
 ### Database Setup
 
 1.  Open your MySQL client (Workbench or Command Line).
