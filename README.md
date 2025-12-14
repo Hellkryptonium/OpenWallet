@@ -317,7 +317,7 @@ If you don’t set an explicit key, OpenWallet will attempt to extract it from a
 
 ## Java GUI-Based Projects Marking Rubric (Review 2) — Highlights
 
-### Code Quality & Testing (10 marks)
+### Code Quality & Testing
 
 - **Separation of concerns**: UI (FXML/controllers), services (Web3/RPC, tokens, NFTs), crypto utilities, and DAO persistence are kept distinct.
 - **Config + dependency boundaries**: DB + RPC are centralized through config helpers and can be overridden via environment variables.
@@ -325,7 +325,7 @@ If you don’t set an explicit key, OpenWallet will attempt to extract it from a
   - Run: `mvn -f openwallet-app/pom.xml test`
 - **Reliability practices**: background work is performed asynchronously and UI updates are marshalled back to the JavaFX thread, reducing UI freezes and race conditions.
 
-### Teamwork & Collaboration (5 marks)
+### Teamwork & Collaboration
 
 If you’re submitting as a team, the easiest way to score well here is to make collaboration visible and repeatable:
 
@@ -336,7 +336,7 @@ If you’re submitting as a team, the easiest way to score well here is to make 
   - Review notes (what changed and why) and screenshots for UI changes
 - **Repo organization** supports parallel work: the wallet app and the two contract projects (`sepolia-token/`, `sepolia-nft/`) can be developed independently.
 
-### Innovation / Extra Effort (2 marks)
+### Innovation / Extra Effort
 
 - **Full demo stack**: includes deployable ERC-20 and ERC-721 projects (Hardhat) so the wallet can be demonstrated end-to-end.
 - **NFT Gallery integration**: pulls owned NFTs via Alchemy’s NFT API and handles common metadata fields and `ipfs://` images.
