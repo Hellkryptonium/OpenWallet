@@ -9,38 +9,27 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="TOP_CENTER" spacing="20.0" style="-fx-background-color: #ffffff;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="io.openwallet.controller.SendTransactionController">
-    <padding>
-        <Insets bottom="30.0" left="40.0" right="40.0" top="30.0" />
-    </padding>
+<VBox alignment="TOP_CENTER" spacing="20.0" styleClass="screen, screen-padding" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="io.openwallet.controller.SendTransactionController">
 
-    <Label text="Send ETH" textFill="#2c3e50">
-        <font>
-            <Font name="System Bold" size="24.0" />
-        </font>
-    </Label>
+    <VBox spacing="14.0" alignment="CENTER_LEFT" maxWidth="560.0" styleClass="card">
+        <Label text="Send ETH" styleClass="label-header" />
 
-    <VBox spacing="15.0" alignment="CENTER_LEFT" maxWidth="500.0">
-        <Label text="Recipient Address" textFill="#34495e">
-            <font><Font name="System Bold" size="14.0"/></font>
-        </Label>
-        <TextField fx:id="recipientField" promptText="0x..." prefHeight="40.0" style="-fx-background-radius: 5; -fx-border-radius: 5;" />
-        
-        <Label text="Amount (ETH)" textFill="#34495e">
-            <font><Font name="System Bold" size="14.0"/></font>
-        </Label>
-        <TextField fx:id="amountField" promptText="0.0" prefHeight="40.0" style="-fx-background-radius: 5; -fx-border-radius: 5;" />
-        
-        <Label text="Password (to sign transaction)" textFill="#34495e">
-            <font><Font name="System Bold" size="14.0"/></font>
-        </Label>
-        <PasswordField fx:id="passwordField" promptText="Enter your password" prefHeight="40.0" style="-fx-background-radius: 5; -fx-border-radius: 5;" />
+        <VBox spacing="10.0" alignment="CENTER_LEFT">
+            <Label text="Recipient Address" styleClass="muted" />
+            <TextField fx:id="recipientField" promptText="0x..." prefHeight="40.0" />
+            
+            <Label text="Amount (ETH)" styleClass="muted" />
+            <TextField fx:id="amountField" promptText="0.0" prefHeight="40.0" />
+            
+            <Label text="Password (to sign transaction)" styleClass="muted" />
+            <PasswordField fx:id="passwordField" promptText="Enter your password" prefHeight="40.0" />
+        </VBox>
+
+        <Label fx:id="statusLabel" wrapText="true" maxWidth="520.0" styleClass="status-label, status-error" />
+
+        <HBox spacing="12.0" alignment="CENTER">
+            <Button text="Cancel" onAction="#handleCancel" prefWidth="140.0" prefHeight="40.0" styleClass="button-secondary, button-pill" />
+            <Button fx:id="sendBtn" text="Send Transaction" onAction="#handleSend" prefWidth="220.0" prefHeight="40.0" styleClass="button-success, button-pill" />
+        </HBox>
     </VBox>
-
-    <Label fx:id="statusLabel" textFill="#e74c3c" wrapText="true" maxWidth="500.0" />
-
-    <HBox spacing="15.0" alignment="CENTER">
-        <Button text="Cancel" onAction="#handleCancel" prefWidth="120.0" prefHeight="40.0" style="-fx-background-color: #ecf0f1; -fx-text-fill: #2c3e50; -fx-background-radius: 5; -fx-cursor: hand;" />
-        <Button fx:id="sendBtn" text="Send Transaction" onAction="#handleSend" prefWidth="200.0" prefHeight="40.0" style="-fx-background-color: #2ecc71; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5; -fx-cursor: hand;" />
-    </HBox>
 </VBox>

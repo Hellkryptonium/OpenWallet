@@ -1,139 +1,351 @@
 # OpenWallet
 
-OpenWallet is a secure, open-source, non-custodial Ethereum wallet built with **Java 17**, **JavaFX**, and **Web3j**. It is designed to provide a seamless experience for managing Ethereum assets on the Sepolia Testnet, featuring military-grade encryption, local database storage, and a modern responsive UI.
+OpenWallet is a non-custodial Ethereum wallet built with **Java 17**, **JavaFX (FXML + CSS)**, and **Web3j**.
+It targets **testnets** (Sepolia + additional configured networks) and includes a complete demo stack:
 
-## 🚀 Features
+- A JavaFX desktop wallet app (MySQL-backed profiles, encrypted key storage)
+- A deployable **ERC-20** example token (Sepolia)
+- A deployable **ERC-721** example NFT collection + mint script (Sepolia)
 
-### Core Wallet Features
+> Safety note: This project is intended for learning and testnets. Do not use it to store real funds.
 
-- **Non-Custodial**: You own your keys. Private keys are encrypted and stored locally.
-- **BIP-39 Compliant**: Generates standard 12-word mnemonic phrases for wallet recovery.
-- **Secure Login**: Password-protected access using AES-GCM encryption.
-- **Real-time Balance**: Fetches live ETH balances from the Sepolia Testnet via Alchemy RPC.
-- **Send & Receive**: Easily send ETH to any address and receive funds via QR code.
-- **Transaction History**: Automatically logs all outgoing transactions to a local database.
+## Features
 
-### Technical Highlights (University Rubric Compliance)
+### Wallet
 
-- **OOP Principles**: Extensive use of Interfaces (`WalletDao`, `TransactionLogDao`), Inheritance (`OpenWalletException`), and Polymorphism.
-- **Database Connectivity**: Custom JDBC implementation with MySQL for storing encrypted wallet profiles and transaction logs.
-- **Multithreading**: Uses `CompletableFuture` for non-blocking blockchain RPC calls and `Platform.runLater` for thread-safe UI updates.
-- **Collections**: Utilizes `List`, `Optional`, and `ObservableList` for efficient data management.
-- **Security**: Implements PBKDF2 key derivation and AES-256-GCM encryption.
+- **Non-custodial** key management (keys never leave the machine)
+- **BIP-39** 12-word mnemonic generation + import
+- **Password-protected login** (encrypted wallet data at rest)
+- **ETH send/receive** (includes QR receive screen)
+- **Local transaction logging** (outgoing txs stored in MySQL)
 
-## 🛠 Tech Stack
+### Tokens (ERC-20)
 
-- **Language**: Java 17
-- **UI Framework**: JavaFX 21 (FXML + CSS)
-- **Blockchain Library**: Web3j 4.10.3
-- **Database**: MySQL 8.0 (JDBC)
-- **Build Tool**: Maven
-- **Cryptography**: Bouncy Castle, PBKDF2, AES-GCM
-- **Utilities**: ZXing (QR Code Generation)
+- Import any ERC-20 by contract address
+- Fetch token metadata (name/symbol/decimals)
+- Show balances and send ERC-20 transfers
+- Example Hardhat project to deploy your own token to Sepolia
 
-## 📦 Installation & Setup
+### NFTs (ERC-721)
 
-### Prerequisites
+- **NFT Gallery** with refresh
+- Fetch owned NFTs using **Alchemy NFT API** (supports common image fields and `ipfs://`)
+- Example Hardhat project to deploy + mint an NFT collection on Sepolia
+- Supports pointing OpenWallet at one or more NFT contract addresses (via env var)
 
-1.  **Java JDK 17** or higher.
-2.  **Maven 3.9+**.
-3.  **MySQL Server** running locally.
+### Multi-network + utilities
 
-### Getting an RPC URL (Alchemy)
+- Networks loaded from JSON config (Sepolia, Base Sepolia, Optimism Sepolia)
+- Bridge screen that opens known bridge URLs for configured networks
+- Optional Chainlink feed addresses included in network config (used by price features)
 
-To connect to the blockchain, you need an API key from a node provider like Alchemy:
-
-1.  Go to [Alchemy.com](https://www.alchemy.com/) and sign up for a free account.
-2.  Navigate to the **Apps** dashboard and click **"Create new app"**.
-3.  Set **Chain** to `Ethereum` and **Network** to `Sepolia`.
-4.  Click **"Create App"**.
-5.  Click **"API Key"** on your new app card.
-6.  Copy the **HTTPS** URL (e.g., `https://eth-sepolia.g.alchemy.com/v2/...`). You will need this for the configuration step below.
-
-### Database Setup
-
-1.  Open your MySQL client (Workbench or Command Line).
-2.  Create the database and tables using the provided schema:
-
-    ```sql
-    CREATE DATABASE openwallet_db;
-    USE openwallet_db;
-
-    CREATE TABLE wallet_profiles (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        profile_name VARCHAR(255) UNIQUE NOT NULL,
-        wallet_address VARCHAR(42) NOT NULL,
-        encrypted_json TEXT NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
-
-    CREATE TABLE transaction_logs (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        wallet_address VARCHAR(42) NOT NULL,
-        tx_hash VARCHAR(66) NOT NULL,
-        amount DECIMAL(20, 8) NOT NULL,
-        token_symbol VARCHAR(10) DEFAULT 'ETH',
-        status VARCHAR(20) DEFAULT 'PENDING',
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
-    ```
-
-3.  Update `src/main/resources/db.properties` with your MySQL credentials:
-    ```properties
-    db.url=jdbc:mysql://localhost:3306/openwallet_db
-    db.user=root
-    db.password=YOUR_PASSWORD
-    rpc.url=https://eth-sepolia.g.alchemy.com/v2/YOUR_API_KEY
-    ```
-
-### Running the Application
-
-1.  Clone the repository:
-    ```bash
-    git clone https://github.com/Hellkryptonium/OpenWallet.git
-    cd OpenWallet/openwallet-app
-    ```
-2.  Build and Run:
-    ```bash
-    mvn javafx:run
-    ```
-
-## 🖥 Usage Guide
-
-1.  **Startup**: On first launch, click **"Create New Wallet"**.
-2.  **Creation**:
-    - Write down your **12-word Secret Recovery Phrase**. This is the ONLY way to recover your funds.
-    - Set a strong password to encrypt your wallet file.
-3.  **Dashboard**:
-    - View your **Wallet Address** and **ETH Balance**.
-    - **Receive**: Click "Receive" to show your QR code.
-    - **Send**: Click "Send", enter a recipient address (0x...) and amount.
-4.  **History**: View your recent transactions in the table at the bottom of the dashboard.
-5.  **Logout**: Securely lock your wallet when done.
-
-## 📂 Project Structure
+## Repository layout
 
 ```
-openwallet-app/
-├── src/main/java/io/openwallet/
-│   ├── controller/       # JavaFX Controllers (MVC Pattern)
-│   ├── crypto/           # Encryption & Key Derivation Logic
-│   ├── db/               # DAO Layer & Database Connection (Singleton)
-│   ├── exception/        # Custom Exception Classes
-│   ├── model/            # POJOs (WalletProfile, TransactionLog)
-│   ├── service/          # Business Logic (Web3j, BIP-39)
-│   └── MainApp.java      # Application Entry Point
-├── src/main/resources/
-│   ├── io/openwallet/view/  # FXML Views & CSS Styles
-│   └── db.properties        # Configuration File
-└── pom.xml                  # Maven Dependencies
+openwallet-app/     JavaFX wallet application (Maven)
+sepolia-token/      Example ERC-20 token (Hardhat)
+sepolia-nft/        Example ERC-721 NFT collection (Hardhat)
+installer/          Windows packaging artifacts (optional)
 ```
 
-## 🔒 Security Architecture
+## Prerequisites
 
-- **Key Storage**: Private keys are never stored in plain text. They are encrypted using **AES-GCM** with a key derived from your password using **PBKDF2WithHmacSHA256**.
-- **Non-Blocking UI**: All network operations (RPC calls) run on background threads to prevent UI freezing, ensuring a smooth user experience.
+### For the JavaFX app
 
-## 📜 License
+- **Java 17+** (project compiles with Java 17)
+- **Maven 3.9+**
+- **MySQL 8+** (local development)
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+### For smart contracts (optional, for “make coins / mint NFTs”)
+
+- **Node.js 18+**
+- Sepolia ETH for gas (faucet)
+- Sepolia RPC URL (Alchemy/Infura/etc)
+
+## Configure OpenWallet (RPC + Database)
+
+OpenWallet loads defaults from `openwallet-app/src/main/resources/db.properties` and `openwallet-app/src/main/resources/networks.json`.
+You can configure via **either** editing the properties file **or** environment variables.
+
+### 1) Create the database
+
+Run the schema file:
+
+- `openwallet-app/src/main/resources/db/schema.sql`
+
+Example (MySQL client):
+
+```sql
+SOURCE path/to/openwallet-app/src/main/resources/db/schema.sql;
+```
+
+### 2) Configure DB + RPC
+
+Option A — edit the properties file (simple local dev):
+
+1. Copy the example template:
+
+```powershell
+copy openwallet-app/src/main/resources/db.properties.example openwallet-app/src/main/resources/db.properties
+```
+
+2. Edit `openwallet-app/src/main/resources/db.properties` and set your values:
+
+```properties
+db.url=jdbc:mysql://localhost:3306/openwallet_db
+db.user=root
+db.password=YOUR_PASSWORD
+
+# Sepolia RPC (recommended: Alchemy)
+rpc.url=https://eth-sepolia.g.alchemy.com/v2/YOUR_KEY
+```
+
+Option B — environment variable overrides (recommended for not committing secrets):
+
+- `OPENWALLET_DB_URL`
+- `OPENWALLET_DB_USER`
+- `OPENWALLET_DB_PASSWORD`
+- `OPENWALLET_RPC_URL`
+- `OPENWALLET_CHAIN_ID` (optional override; otherwise comes from the selected network)
+
+PowerShell example:
+
+```powershell
+$env:OPENWALLET_DB_URL='jdbc:mysql://localhost:3306/openwallet_db'
+$env:OPENWALLET_DB_USER='root'
+$env:OPENWALLET_DB_PASSWORD='YOUR_PASSWORD'
+$env:OPENWALLET_RPC_URL='https://eth-sepolia.g.alchemy.com/v2/YOUR_KEY'
+```
+
+### 3) Configure networks (optional)
+
+Networks are defined in `openwallet-app/src/main/resources/networks.json`.
+
+- If a network’s `rpcUrl` is blank, OpenWallet falls back to `OPENWALLET_RPC_URL` then `rpc.url` from `db.properties`.
+- The active network selection is saved in user preferences.
+
+## Build, test, and run
+
+### Run (development)
+
+From the repo root:
+
+```powershell
+mvn -f openwallet-app/pom.xml javafx:run
+```
+
+Or from the app directory:
+
+```powershell
+cd openwallet-app
+mvn javafx:run
+```
+
+### Run tests
+
+```powershell
+mvn -f openwallet-app/pom.xml test
+```
+
+### Build a JAR
+
+```powershell
+mvn -f openwallet-app/pom.xml -DskipTests package
+```
+
+The built artifact will be under `openwallet-app/target/`.
+
+## Using the app (end-to-end)
+
+1. **Startup**
+   - If no profiles exist: Create Wallet / Import Wallet.
+   - If profiles exist: you’ll land on the Login screen.
+2. **Create Wallet**
+   - Save the 12-word recovery phrase.
+   - Pick a password (used to encrypt wallet data).
+3. **Dashboard**
+   - See address + balance.
+   - Send ETH, Receive ETH (QR), view recent tx history.
+4. **Tokens**
+   - Add Token → paste ERC-20 contract address.
+   - Send Token.
+5. **NFTs**
+   - NFTs → Refresh.
+   - See “NFT setup” below if gallery is empty.
+
+## “Make coins” (deploy your own ERC-20 token)
+
+The `sepolia-token/` folder contains a minimal mintable ERC-20 contract (Hardhat + OpenZeppelin).
+
+### 1) Setup
+
+```powershell
+cd sepolia-token
+npm install
+copy .env.example .env
+```
+
+Edit `.env`:
+
+- `SEPOLIA_RPC_URL`
+- `DEPLOYER_PRIVATE_KEY` (no `0x` prefix)
+
+Optional:
+
+- `TOKEN_NAME`, `TOKEN_SYMBOL`, `TOKEN_DECIMALS`, `INITIAL_SUPPLY_TOKENS`
+
+### 2) Compile + deploy
+
+```powershell
+npm run compile
+npm run deploy:sepolia
+```
+
+The deploy script prints the contract address and mints the initial supply to the deployer.
+
+### 3) Mint more tokens (optional)
+
+This ERC-20 is mintable by the owner.
+
+Use Hardhat console:
+
+```powershell
+npx hardhat console --network sepolia
+```
+
+Then:
+
+```javascript
+const token = await ethers.getContractAt(
+  "OpenWalletToken",
+  "0xYOUR_TOKEN_ADDRESS"
+);
+await token.mint("0xRECIPIENT_ADDRESS", ethers.parseUnits("1000", 18));
+```
+
+> If you changed decimals, update `parseUnits(..., DECIMALS)` accordingly.
+
+### 4) Import the token into OpenWallet
+
+In OpenWallet:
+
+Dashboard → Tokens → Add Token → paste the ERC-20 address.
+
+Imported tokens are persisted under your user profile (typically `~/.openwallet/tokens.json`).
+
+## “Make NFTs” (deploy + mint an ERC-721 collection)
+
+The `sepolia-nft/` folder contains an ERC-721 contract and scripts to deploy + mint.
+
+### 1) Setup
+
+```powershell
+cd sepolia-nft
+npm install
+copy .env.example .env
+```
+
+Edit `.env`:
+
+- `SEPOLIA_RPC_URL`
+- `DEPLOYER_PRIVATE_KEY` (with or without `0x` prefix)
+
+Optional:
+
+- `NFT_NAME`, `NFT_SYMBOL`
+- `MINT_TO` (defaults to deployer)
+- `TOKEN_URI` (optional metadata override)
+
+### 2) Compile + deploy
+
+```powershell
+npm run compile
+npm run deploy:sepolia
+```
+
+This writes the deployed address to `sepolia-nft/.deployed-address`.
+
+### 3) Mint an NFT
+
+```powershell
+npm run mint:sepolia
+```
+
+If `TOKEN_URI` is empty, the script mints with inline `data:application/json;base64,...` metadata and a deterministic RoboHash image URL so the NFT shows a unique image without IPFS.
+
+## NFT setup in OpenWallet (so the gallery finds your contracts)
+
+OpenWallet loads NFT collections from:
+
+1. `OPENWALLET_NFT_CONTRACTS` (comma-separated contract addresses)
+2. The local `sepolia-nft/.deployed-address` file (dev convenience if you run the app from the repo)
+
+PowerShell example:
+
+```powershell
+$env:OPENWALLET_NFT_CONTRACTS='0xABC...,0xDEF...'
+mvn -f openwallet-app/pom.xml javafx:run
+```
+
+### Alchemy API key requirement
+
+The NFT Gallery uses the Alchemy NFT API. Configure one of:
+
+- `OPENWALLET_ALCHEMY_API_KEY` (preferred)
+- `ALCHEMY_API_KEY`
+
+If you don’t set an explicit key, OpenWallet will attempt to extract it from an Alchemy-style RPC URL like `https://...alchemy.com/v2/<key>`.
+
+## Troubleshooting
+
+### App starts but shows empty balances
+
+- Confirm `OPENWALLET_RPC_URL` or `rpc.url` is set.
+- Ensure the selected network in Settings has a usable RPC.
+
+### Database connection errors
+
+- Confirm MySQL is running.
+- Confirm the schema has been created (`schema.sql`).
+- Confirm DB URL/user/password (properties or env vars).
+
+### NFT Gallery is empty
+
+- Confirm you minted to the currently logged-in wallet address.
+- Confirm `OPENWALLET_ALCHEMY_API_KEY` (or a valid Alchemy `/v2/<key>` RPC URL).
+- Confirm `OPENWALLET_NFT_CONTRACTS` includes your NFT contract address (or `.deployed-address` exists).
+
+## Java GUI-Based Projects Marking Rubric (Review 2) — Highlights
+
+### Code Quality & Testing (10 marks)
+
+- **Separation of concerns**: UI (FXML/controllers), services (Web3/RPC, tokens, NFTs), crypto utilities, and DAO persistence are kept distinct.
+- **Config + dependency boundaries**: DB + RPC are centralized through config helpers and can be overridden via environment variables.
+- **Automated tests**: the app module includes JUnit 5 tests (plus Mockito for mocking).
+  - Run: `mvn -f openwallet-app/pom.xml test`
+- **Reliability practices**: background work is performed asynchronously and UI updates are marshalled back to the JavaFX thread, reducing UI freezes and race conditions.
+
+### Teamwork & Collaboration (5 marks)
+
+If you’re submitting as a team, the easiest way to score well here is to make collaboration visible and repeatable:
+
+- **Recommended workflow**: feature branches + pull requests + review before merge.
+- **Suggested evidence for marking**:
+  - PR descriptions that reference features (Tokens, NFTs, Bridge, UI)
+  - Linked issues/tasks, and small incremental commits
+  - Review notes (what changed and why) and screenshots for UI changes
+- **Repo organization** supports parallel work: the wallet app and the two contract projects (`sepolia-token/`, `sepolia-nft/`) can be developed independently.
+
+### Innovation / Extra Effort (2 marks)
+
+- **Full demo stack**: includes deployable ERC-20 and ERC-721 projects (Hardhat) so the wallet can be demonstrated end-to-end.
+- **NFT Gallery integration**: pulls owned NFTs via Alchemy’s NFT API and handles common metadata fields and `ipfs://` images.
+- **Multi-network architecture**: networks and bridges are config-driven via `networks.json`, enabling Sepolia/Base Sepolia/Optimism Sepolia without code changes.
+- **Developer utilities**: the `openwallet-app/tools/` scripts help validate NFT ownership/metadata during demos.
+
+## Technical highlights
+
+- **DAO-based persistence**: `WalletDao` + `TransactionLogDao` (MySQL via JDBC)
+- **Async UX**: RPC/NFT operations use `CompletableFuture` + UI updates via JavaFX thread
+- **Security**: encrypted wallet payload stored in DB; password-derived keys; non-custodial signing
+- **Config-driven networks**: networks and bridge URLs loaded from JSON

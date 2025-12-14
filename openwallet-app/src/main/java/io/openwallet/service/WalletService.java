@@ -1,7 +1,6 @@
 package io.openwallet.service;
 
 import io.openwallet.crypto.CryptoUtil;
-import io.openwallet.db.DatabaseConfig;
 import io.openwallet.db.TransactionLogDao;
 import io.openwallet.db.WalletDao;
 import io.openwallet.exception.AuthenticationException;
@@ -15,7 +14,6 @@ import org.web3j.crypto.Credentials;
 import org.web3j.crypto.MnemonicUtils;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
-import org.web3j.protocol.http.HttpService;
 import org.web3j.utils.Convert;
 
 import java.math.BigDecimal;
@@ -27,12 +25,12 @@ public class WalletService {
 
     private final WalletDao walletDao;
     private final TransactionLogDao transactionLogDao;
-    private final Web3j web3j;
+    private final NetworkManager networkManager;
 
-    public WalletService(WalletDao walletDao, TransactionLogDao transactionLogDao) {
+    public WalletService(WalletDao walletDao, TransactionLogDao transactionLogDao, NetworkManager networkManager) {
         this.walletDao = walletDao;
         this.transactionLogDao = transactionLogDao;
-        this.web3j = Web3j.build(new HttpService(DatabaseConfig.getRpcUrl()));
+        this.networkManager = networkManager;
     }
 
     /**
@@ -110,6 +108,7 @@ public class WalletService {
      * @return Balance in ETH as BigDecimal.
      */
     public CompletableFuture<BigDecimal> getBalance(String address) {
+        Web3j web3j = networkManager.getWeb3j();
         return web3j.ethGetBalance(address, DefaultBlockParameterName.LATEST)
                 .sendAsync()
                 .thenApply(ethGetBalance -> {
@@ -130,6 +129,8 @@ public class WalletService {
         // 1. Get Private Key
         String privateKey = getPrivateKey(profileName, password);
         Credentials credentials = Credentials.create(privateKey);
+
+        Web3j web3j = networkManager.getWeb3j();
 
         // 2. Check Balance (Optional but good practice)
         // Note: This is async, so we block here for simplicity in this method, or we could chain futures.

@@ -2,6 +2,7 @@ package io.openwallet.controller;
 
 import io.openwallet.MainApp;
 import io.openwallet.model.WalletProfile;
+import io.openwallet.service.DesktopNotificationService;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
@@ -68,9 +69,21 @@ public class LoginController {
             mainApp.getWalletService().getPrivateKey(selectedProfile.getProfileName(), password);
             
             // If successful, load dashboard
+            if (mainApp.getNotificationService() != null) {
+                mainApp.getNotificationService().info(
+                        "Login successful",
+                        "Welcome back, " + selectedProfile.getProfileName() + "."
+                );
+            }
             mainApp.showDashboard(selectedProfile.getProfileName());
         } catch (Exception e) {
             e.printStackTrace();
+            if (mainApp.getNotificationService() != null) {
+                mainApp.getNotificationService().error(
+                        "Login failed",
+                        "Invalid password or corrupted wallet data."
+                );
+            }
             showAlert("Login Failed", "Invalid password or corrupted wallet data.");
         }
     }

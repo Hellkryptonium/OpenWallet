@@ -1,12 +1,9 @@
 package io.openwallet.service;
 
+import io.openwallet.db.TransactionLogDao;
 import io.openwallet.db.WalletDao;
-import io.openwallet.model.WalletProfile;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.web3j.crypto.MnemonicUtils;
-
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -17,7 +14,9 @@ class WalletServiceTest {
     @Test
     void testGenerateMnemonic() {
         WalletDao mockDao = mock(WalletDao.class);
-        WalletService service = new WalletService(mockDao);
+        TransactionLogDao mockTxDao = mock(TransactionLogDao.class);
+        NetworkManager mockNetworkManager = mock(NetworkManager.class);
+        WalletService service = new WalletService(mockDao, mockTxDao, mockNetworkManager);
         
         String mnemonic = service.generateMnemonic();
         assertNotNull(mnemonic);

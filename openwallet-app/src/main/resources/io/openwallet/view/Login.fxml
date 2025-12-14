@@ -6,43 +6,38 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 <?import javafx.scene.control.Hyperlink?>
 
-<VBox alignment="CENTER" spacing="20.0" style="-fx-background-color: #f0f2f5;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="io.openwallet.controller.LoginController">
-    <padding>
-        <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
-    </padding>
+<VBox alignment="CENTER" spacing="16.0" styleClass="login-screen, screen-padding" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="io.openwallet.controller.LoginController">
 
-    <Label text="Welcome Back" textFill="#2c3e50">
-        <font>
-            <Font name="System Bold" size="32.0" />
-        </font>
-    </Label>
+    <VBox alignment="CENTER" spacing="6.0">
+        <Label text="OPENWALLET" styleClass="label-hero, mono, login-brand" />
+        <Label text="Secure access portal" styleClass="muted, login-tagline" />
+    </VBox>
     
-    <VBox spacing="10.0" maxWidth="300.0">
-        <Label text="Select Wallet Profile" textFill="#7f8c8d" />
-        <ComboBox fx:id="profileSelector" prefWidth="300.0" style="-fx-font-size: 14px;" />
+    <VBox spacing="12.0" maxWidth="380.0" styleClass="card, login-card">
+        <Label text="Select Wallet Profile" styleClass="muted" />
+        <ComboBox fx:id="profileSelector" prefWidth="320.0" />
         
-        <Label text="Password" textFill="#7f8c8d">
+        <Label text="Password" styleClass="muted">
             <VBox.margin>
                 <Insets top="10.0" />
             </VBox.margin>
         </Label>
-        <PasswordField fx:id="passwordField" promptText="Enter your password" style="-fx-font-size: 14px; -fx-padding: 10;" />
+        <PasswordField fx:id="passwordField" promptText="Enter your password" />
         
-        <Button fx:id="loginBtn" defaultButton="true" mnemonicParsing="false" onAction="#handleLogin" text="Login" prefWidth="300.0" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-size: 14px; -fx-cursor: hand; -fx-padding: 10; -fx-background-radius: 5;">
+        <Button fx:id="loginBtn" defaultButton="true" mnemonicParsing="false" onAction="#handleLogin" text="LOGIN SYSTEM" prefWidth="320.0" styleClass="login-primary">
             <VBox.margin>
-                <Insets top="20.0" />
+                <Insets top="10.0" />
             </VBox.margin>
         </Button>
         
-        <VBox alignment="CENTER" spacing="5.0">
+        <VBox alignment="CENTER" spacing="6.0" styleClass="login-links">
             <VBox.margin>
-                <Insets top="20.0" />
+                <Insets top="6.0" />
             </VBox.margin>
-            <Hyperlink onAction="#handleCreateNew" text="Create New Wallet" textFill="#3498db" />
-            <Hyperlink onAction="#handleImport" text="Import Existing Wallet" textFill="#3498db" />
+            <Hyperlink onAction="#handleCreateNew" text="Create New Wallet" />
+            <Hyperlink onAction="#handleImport" text="Import Existing Wallet" />
         </VBox>
     </VBox>
 </VBox>

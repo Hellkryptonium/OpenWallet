@@ -23,18 +23,24 @@ public class DashboardController {
     @FXML private Label walletNameLabel;
     @FXML private Label addressLabel;
     @FXML private Label balanceLabel;
+    @FXML private Label networkLabel;
+    @FXML private Label priceLabel;
     @FXML private TableView<TransactionLog> txTable;
 
     private MainApp mainApp;
     private WalletDao walletDao;
     private TransactionLogDao transactionLogDao;
     private WalletService walletService;
+    private io.openwallet.service.NetworkManager networkManager;
+    private io.openwallet.service.PriceService priceService;
 
     public void setMainApp(MainApp mainApp) {
         this.mainApp = mainApp;
         this.walletDao = mainApp.getWalletDao();
         this.transactionLogDao = mainApp.getTransactionLogDao(); // Need to add getter in MainApp
         this.walletService = mainApp.getWalletService();
+        this.networkManager = mainApp.getNetworkManager();
+        this.priceService = mainApp.getPriceService();
         setupTable();
     }
 
@@ -66,6 +72,10 @@ public class DashboardController {
             WalletProfile profile = profileOpt.get();
             walletNameLabel.setText(profile.getProfileName());
             addressLabel.setText(profile.getWalletAddress());
+
+            if (networkLabel != null && networkManager != null && networkManager.getActiveNetwork() != null) {
+                networkLabel.setText(networkManager.getActiveNetwork().getName());
+            }
             
             // Load Transactions
             loadTransactions(profile.getWalletAddress());
@@ -85,6 +95,16 @@ public class DashboardController {
                         });
                         return null;
                     });
+
+            if (priceLabel != null && priceService != null) {
+                priceLabel.setText("");
+                priceService.getUsdPrice("ETH_USD")
+                        .thenAccept(price -> Platform.runLater(() -> priceLabel.setText(String.format("≈ $%.2f", price))))
+                        .exceptionally(ex -> {
+                            Platform.runLater(() -> priceLabel.setText(""));
+                            return null;
+                        });
+            }
         }
     }
 
@@ -118,5 +138,29 @@ public class DashboardController {
         String profileName = walletNameLabel.getText();
         String address = addressLabel.getText();
         mainApp.showReceive(profileName, address);
+    }
+
+    @FXML
+    private void handleTokens() {
+        String profileName = walletNameLabel.getText();
+        mainApp.showTokens(profileName);
+    }
+
+    @FXML
+    private void handleBridge() {
+        String profileName = walletNameLabel.getText();
+        mainApp.showBridge(profileName);
+    }
+
+    @FXML
+    private void handleNfts() {
+        String profileName = walletNameLabel.getText();
+        mainApp.showNftGallery(profileName);
+    }
+
+    @FXML
+    private void handleSettings() {
+        String profileName = walletNameLabel.getText();
+        mainApp.showSettings(profileName);
     }
 }

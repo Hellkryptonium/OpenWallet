@@ -1,0 +1,7 @@
+db.url=jdbc:mysql://localhost:3306/openwallet_db
+db.user=root
+db.password=YOUR_PASSWORD
+
+# RPC Configuration
+# Recommended (Alchemy Sepolia): https://eth-sepolia.g.alchemy.com/v2/YOUR_KEY
+rpc.url=

@@ -3,6 +3,7 @@ package io.openwallet.controller;
 import io.openwallet.MainApp;
 import io.openwallet.exception.InsufficientFundsException;
 import io.openwallet.exception.OpenWalletException;
+import io.openwallet.service.DesktopNotificationService;
 import io.openwallet.service.WalletService;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -74,6 +75,12 @@ public class SendTransactionController {
                     statusLabel.setText("Success! Tx Hash: " + txHash);
                     statusLabel.setStyle("-fx-text-fill: #2ecc71;");
                     sendBtn.setDisable(false);
+                    if (mainApp.getNotificationService() != null) {
+                        mainApp.getNotificationService().info(
+                                "Transaction sent",
+                                amount.toPlainString() + " ETH → " + shortenAddress(recipient) + "\n" + txHash
+                        );
+                    }
                     // Optionally clear fields or navigate back
                 });
             } catch (InsufficientFundsException e) {
@@ -81,12 +88,24 @@ public class SendTransactionController {
                     statusLabel.setText("Error: Insufficient funds.");
                     statusLabel.setStyle("-fx-text-fill: #e74c3c;");
                     sendBtn.setDisable(false);
+                    if (mainApp.getNotificationService() != null) {
+                        mainApp.getNotificationService().error(
+                                "Transaction failed",
+                                "Insufficient funds."
+                        );
+                    }
                 });
             } catch (OpenWalletException e) {
                 Platform.runLater(() -> {
                     statusLabel.setText("Error: " + e.getMessage());
                     statusLabel.setStyle("-fx-text-fill: #e74c3c;");
                     sendBtn.setDisable(false);
+                    if (mainApp.getNotificationService() != null) {
+                        mainApp.getNotificationService().error(
+                                "Transaction failed",
+                                e.getMessage()
+                        );
+                    }
                 });
             } catch (Exception e) {
                 Platform.runLater(() -> {
@@ -94,9 +113,22 @@ public class SendTransactionController {
                     statusLabel.setStyle("-fx-text-fill: #e74c3c;");
                     sendBtn.setDisable(false);
                     e.printStackTrace();
+                    if (mainApp.getNotificationService() != null) {
+                        mainApp.getNotificationService().error(
+                                "Transaction failed",
+                                e.getMessage()
+                        );
+                    }
                 });
             }
         });
+    }
+
+    private String shortenAddress(String addr) {
+        if (addr == null) return "";
+        String a = addr.trim();
+        if (a.length() <= 12) return a;
+        return a.substring(0, 6) + "…" + a.substring(a.length() - 4);
     }
 
     @FXML

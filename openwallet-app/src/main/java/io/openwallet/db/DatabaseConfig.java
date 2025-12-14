@@ -20,18 +20,22 @@ public class DatabaseConfig {
     }
 
     public static String getUrl() {
-        return properties.getProperty("db.url");
+        String env = System.getenv("OPENWALLET_DB_URL");
+        return (env != null && !env.isBlank()) ? env : properties.getProperty("db.url");
     }
 
     public static String getUser() {
-        return properties.getProperty("db.user");
+        String env = System.getenv("OPENWALLET_DB_USER");
+        return (env != null && !env.isBlank()) ? env : properties.getProperty("db.user");
     }
 
     public static String getPassword() {
-        return properties.getProperty("db.password");
+        String env = System.getenv("OPENWALLET_DB_PASSWORD");
+        return (env != null && !env.isBlank()) ? env : properties.getProperty("db.password");
     }
 
     public static String getRpcUrl() {
-        return properties.getProperty("rpc.url");
+        String env = System.getenv("OPENWALLET_RPC_URL");
+        return (env != null && !env.isBlank()) ? env : properties.getProperty("rpc.url");
     }
 }

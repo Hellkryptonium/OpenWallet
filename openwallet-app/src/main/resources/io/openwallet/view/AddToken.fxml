@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox spacing="16.0" styleClass="screen, screen-padding" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="io.openwallet.controller.AddTokenController">
+
+    <HBox alignment="CENTER_LEFT" spacing="12.0" styleClass="toolbar">
+        <Label text="Import Custom Token" styleClass="label-header" />
+        <Region HBox.hgrow="ALWAYS" />
+        <Button text="Back" onAction="#handleBack" styleClass="button-ghost" />
+    </HBox>
+
+    <VBox spacing="8.0" styleClass="card, card-compact">
+        <Label text="ERC-20 Contract Address" styleClass="muted" />
+        <TextField fx:id="contractField" promptText="0x..." />
+    </VBox>
+
+    <Label fx:id="statusLabel" text="" wrapText="true" styleClass="status-label" />
+
+    <Button fx:id="addBtn" text="Add Token" onAction="#handleAdd" prefWidth="180.0" prefHeight="44.0" styleClass="button-accent, button-pill" />
+</VBox>

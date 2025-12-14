@@ -1,0 +1,54 @@
+[
+  {
+    "id": "sepolia",
+    "name": "Ethereum Sepolia",
+    "rpcUrl": "",
+    "chainId": 11155111,
+    "bridgeUrl": "",
+    "bridges": [
+      {
+        "name": "Base Bridge (to Base Sepolia)",
+        "url": "https://bridge.base.org/"
+      },
+      {
+        "name": "Optimism Bridge (to OP Sepolia)",
+        "url": "https://app.optimism.io/bridge"
+      }
+    ],
+    "chainlinkFeeds": {
+      "ETH_USD": "0x694AA1769357215DE4FAC081bf1f309aDC325306"
+    }
+  },
+  {
+    "id": "base-sepolia",
+    "name": "Base Sepolia",
+    "rpcUrl": "",
+    "chainId": 84532,
+    "bridgeUrl": "",
+    "bridges": [
+      {
+        "name": "Base Bridge",
+        "url": "https://bridge.base.org/"
+      }
+    ],
+    "chainlinkFeeds": {
+      "ETH_USD": "0x4aDC67696bA383F43DD60A9e78F2C97Fbbfc7cb1"
+    }
+  },
+  {
+    "id": "optimism-sepolia",
+    "name": "Optimism Sepolia",
+    "rpcUrl": "",
+    "chainId": 11155420,
+    "bridgeUrl": "",
+    "bridges": [
+      {
+        "name": "Optimism Bridge",
+        "url": "https://app.optimism.io/bridge"
+      }
+    ],
+    "chainlinkFeeds": {
+      "ETH_USD": "0x61Ec26aA57019C486B10502285c5A3D4A4750AD7"
+    }
+  }
+]

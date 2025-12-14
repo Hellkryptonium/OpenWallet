@@ -1,13 +1,47 @@
-# Maven build output
-openwallet-app/target/
-
-# IntelliJ / VSCode
-.idea/
-.vscode/
-
-# OS files
+# --- OS / Editor ---
 .DS_Store
 Thumbs.db
 
-PHASE.md
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+.classpath
+.project
+.settings/
+
+# --- Java / Maven ---
+**/target/
+*.log
+hs_err_pid*
+
+# --- Local docs / tooling outputs ---
+llms-full.txt
+
+# --- OpenWallet local configuration (contains secrets) ---
+# NOTE: If this file was already committed, .gitignore will not remove it.
+# Prefer using env vars and keep db.properties out of git.
+openwallet-app/src/main/resources/db.properties
+
+# --- Installer packaging output (generated) ---
+installer/windows/OpenWallet/app/
+installer/windows/OpenWallet/runtime/
+
+# --- OpenWallet tooling output (generated) ---
+openwallet-app/tools/out/
+
+# --- Node / Hardhat (generic) ---
+**/node_modules/
+**/cache/
+**/artifacts/
+**/coverage/
+**/coverage.json
+**/*.log
+**/.env
+**/.env.*
+!**/.env.example
+**/.deployed-address
+**/typechain/
+**/typechain-types/
 

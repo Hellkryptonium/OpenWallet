@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox spacing="14.0" styleClass="screen, screen-padding" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="io.openwallet.controller.SettingsController">
+
+    <HBox alignment="CENTER_LEFT" spacing="12.0" styleClass="toolbar">
+        <Label text="Settings" styleClass="label-header" />
+        <Region HBox.hgrow="ALWAYS" />
+        <Button text="Back" onAction="#handleBack" styleClass="button-ghost" />
+    </HBox>
+
+    <VBox spacing="10.0" styleClass="card, card-compact">
+        <Label text="Active Network" styleClass="muted" />
+        <ComboBox fx:id="networkSelector" />
+
+        <Label text="RPC URL (effective)" styleClass="muted" />
+        <Label fx:id="currentRpcLabel" text="" wrapText="true" styleClass="mono" />
+    </VBox>
+
+    <Label fx:id="statusLabel" text="" wrapText="true" styleClass="status-label" />
+
+    <VBox spacing="10.0" styleClass="card, card-compact">
+        <Label text="Security" styleClass="label-subheader" />
+        <Label text="Private keys are sensitive. Only reveal if you understand the risks." styleClass="muted" wrapText="true" />
+
+        <Button text="Show Private Key" onAction="#handleShowPrivateKey" prefWidth="180.0" prefHeight="38.0" styleClass="button-warning, button-pill" />
+    </VBox>
+
+    <Button text="Save" onAction="#handleSave" prefWidth="180.0" prefHeight="44.0" styleClass="button-slate, button-pill" />
+</VBox>

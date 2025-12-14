@@ -8,6 +8,13 @@ import io.openwallet.db.MySQLTransactionLogDao;
 import io.openwallet.db.MySQLWalletDao;
 import io.openwallet.db.TransactionLogDao;
 import io.openwallet.db.WalletDao;
+import io.openwallet.service.JsonTokenRepository;
+import io.openwallet.service.DesktopNotificationService;
+import io.openwallet.service.NetworkManager;
+import io.openwallet.service.NftService;
+import io.openwallet.service.PriceService;
+import io.openwallet.service.TokenRepository;
+import io.openwallet.service.TokenService;
 import io.openwallet.service.WalletService;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -18,6 +25,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 
 /**
  * Main JavaFX entry point.
@@ -28,6 +36,12 @@ public class MainApp extends Application {
     private WalletService walletService;
     private WalletDao walletDao;
     private TransactionLogDao transactionLogDao;
+    private NetworkManager networkManager;
+    private TokenRepository tokenRepository;
+    private TokenService tokenService;
+    private PriceService priceService;
+    private NftService nftService;
+    private DesktopNotificationService notificationService;
 
     @Override
     public void start(Stage primaryStage) {
@@ -45,10 +59,16 @@ public class MainApp extends Application {
         }
 
         // Initialize Services
+        this.networkManager = NetworkManager.getInstance();
+        this.tokenRepository = new JsonTokenRepository();
         MySQLDatabaseConnection dbConnection = MySQLDatabaseConnection.getInstance();
         this.walletDao = new MySQLWalletDao(dbConnection);
         this.transactionLogDao = new MySQLTransactionLogDao(dbConnection);
-        this.walletService = new WalletService(walletDao, transactionLogDao);
+        this.walletService = new WalletService(walletDao, transactionLogDao, networkManager);
+        this.tokenService = new TokenService(networkManager, walletService, transactionLogDao);
+        this.priceService = new PriceService(networkManager);
+        this.nftService = new NftService(networkManager);
+        this.notificationService = new DesktopNotificationService("OpenWallet", "/io/openwallet/images/icon.png");
 
         if (walletDao.getAll().isEmpty()) {
             showStartup();
@@ -57,13 +77,25 @@ public class MainApp extends Application {
         }
     }
 
-    private void applyStyles(Scene scene) {
+    @Override
+    public void stop() {
         try {
-            String css = getClass().getResource("view/styles.css").toExternalForm();
-            scene.getStylesheets().add(css);
-        } catch (Exception e) {
-            System.out.println("Error loading styles.css: " + e.getMessage());
+            if (notificationService != null) {
+                notificationService.shutdown();
+            }
+        } catch (Exception ignored) {
         }
+    }
+
+    private void applyStyles(Scene scene) {
+        URL cssUrl = MainApp.class.getResource("/io/openwallet/view/styles.css");
+        if (cssUrl == null) {
+            System.out.println("Error loading styles.css: resource not found at /io/openwallet/view/styles.css");
+            return;
+        }
+
+        String css = cssUrl.toExternalForm();
+        scene.getStylesheets().setAll(css);
     }
 
     public void showLogin() {
@@ -154,6 +186,114 @@ public class MainApp extends Application {
         }
     }
 
+    public void showTokens(String profileName) {
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(MainApp.class.getResource("view/Tokens.fxml"));
+            Pane root = loader.load();
+
+            io.openwallet.controller.TokensController controller = loader.getController();
+            controller.setMainApp(this);
+            controller.setProfileName(profileName);
+
+            Scene scene = new Scene(root, 800, 600);
+            applyStyles(scene);
+            primaryStage.setScene(scene);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void showAddToken(String profileName) {
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(MainApp.class.getResource("view/AddToken.fxml"));
+            Pane root = loader.load();
+
+            io.openwallet.controller.AddTokenController controller = loader.getController();
+            controller.setMainApp(this);
+            controller.setProfileName(profileName);
+
+            Scene scene = new Scene(root, 600, 400);
+            applyStyles(scene);
+            primaryStage.setScene(scene);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void showSendToken(String profileName) {
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(MainApp.class.getResource("view/SendToken.fxml"));
+            Pane root = loader.load();
+
+            io.openwallet.controller.SendTokenController controller = loader.getController();
+            controller.setMainApp(this);
+            controller.setProfileName(profileName);
+
+            Scene scene = new Scene(root, 600, 520);
+            applyStyles(scene);
+            primaryStage.setScene(scene);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void showBridge(String profileName) {
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(MainApp.class.getResource("view/Bridge.fxml"));
+            Pane root = loader.load();
+
+            io.openwallet.controller.BridgeController controller = loader.getController();
+            controller.setMainApp(this);
+            controller.setProfileName(profileName);
+
+            Scene scene = new Scene(root, 700, 520);
+            applyStyles(scene);
+            primaryStage.setScene(scene);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void showNftGallery(String profileName) {
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(MainApp.class.getResource("view/NftGallery.fxml"));
+            Pane root = loader.load();
+
+            io.openwallet.controller.NftGalleryController controller = loader.getController();
+            controller.setMainApp(this);
+            controller.setProfileName(profileName);
+
+            Scene scene = new Scene(root, 800, 600);
+            applyStyles(scene);
+            primaryStage.setScene(scene);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void showSettings(String profileName) {
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(MainApp.class.getResource("view/Settings.fxml"));
+            Pane root = loader.load();
+
+            io.openwallet.controller.SettingsController controller = loader.getController();
+            controller.setMainApp(this);
+            controller.setProfileName(profileName);
+
+            Scene scene = new Scene(root, 600, 420);
+            applyStyles(scene);
+            primaryStage.setScene(scene);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void showSendTransaction(String profileName) {
         try {
             FXMLLoader loader = new FXMLLoader();
@@ -192,6 +332,37 @@ public class MainApp extends Application {
 
     public WalletService getWalletService() {
         return walletService;
+    }
+
+    public NetworkManager getNetworkManager() {
+        return networkManager;
+    }
+
+    public TokenRepository getTokenRepository() {
+        return tokenRepository;
+    }
+
+    public TokenService getTokenService() {
+        return tokenService;
+    }
+
+    public PriceService getPriceService() {
+        return priceService;
+    }
+
+    public NftService getNftService() {
+        return nftService;
+    }
+
+    public DesktopNotificationService getNotificationService() {
+        return notificationService;
+    }
+
+    public void openExternalUrl(String url) {
+        if (url == null || url.isBlank()) {
+            return;
+        }
+        getHostServices().showDocument(url);
     }
 
     public WalletDao getWalletDao() {
